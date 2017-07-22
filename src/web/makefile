@@ -17,3 +17,13 @@ install: build
 
 clean:
 	rm -rf ../../bin/ ../../pkg/
+
+init:
+	glide init
+
+dependencies:
+	glide up
+
+get:
+#	make Module=121 get
+	glide get $(Module)
