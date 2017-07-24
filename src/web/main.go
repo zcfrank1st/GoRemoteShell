@@ -7,6 +7,14 @@ import (
 
 func main() {
     r := gin.Default()
-    r.GET("/ping", handler.SimpleHandler)
+
+    r.GET("/status", handler.StatusHandler)
+
+    v1 := r.Group("/openapi/v1")
+    {
+        v1.POST("/member", handler.MemberHandler)
+        v1.POST("/display", handler.DisplayHandler)
+    }
+
     r.Run()
 }

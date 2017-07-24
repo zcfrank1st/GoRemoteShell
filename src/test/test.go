@@ -2,30 +2,28 @@ package main
 
 import (
     "fmt"
-    //"test/gogo"
-    _ "strings"
+    "time"
 )
 
-func helloworld() {
-    fmt.Println("this is a demo")
-}
+func main () {
+    c1 := make(chan string)
+    c2 := make(chan string)
 
-func main() {
-    //helloworld()
-    //gogo.Go(121)
-    //gogo.BT("haha")
-    //
-    //
-    //
-    //MM("666")   // go run *.go
+    go func() {
+        time.Sleep(time.Second * 1)
+        c1 <- "one"
+    }()
 
-    //str := "Go is a beautiful language!"
-    //for pos, char := range str {
-    //    fmt.Printf("Character on position %d is: %c \n", pos, char)
-    //}
+    go func() {
+        time.Sleep(time.Second * 2)
+        c2 <- "two"
+    }()
 
-    for i := 0;;i++ {
-        fmt.Println("value is ", i)
+    select {
+    case res := <-c1:
+        fmt.Println(res)
+    case <-time.After(time.Second * 10):
+        fmt.Println("timeout 1")
     }
 
 }
