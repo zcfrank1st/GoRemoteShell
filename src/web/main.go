@@ -3,7 +3,6 @@ package main
 import (
     "github.com/gin-gonic/gin"
     "web/handler"
-    "fmt"
 )
 
 func main() {
