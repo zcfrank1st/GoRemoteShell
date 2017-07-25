@@ -1,29 +1,10 @@
 package main
 
 import (
+    "web/cipher"
     "fmt"
-    "time"
 )
 
 func main () {
-    c1 := make(chan string)
-    c2 := make(chan string)
-
-    go func() {
-        time.Sleep(time.Second * 1)
-        c1 <- "one"
-    }()
-
-    go func() {
-        time.Sleep(time.Second * 2)
-        c2 <- "two"
-    }()
-
-    select {
-    case res := <-c1:
-        fmt.Println(res)
-    case <-time.After(time.Second * 10):
-        fmt.Println("timeout 1")
-    }
-
+    fmt.Println(cipher.Encode("http://localhost:8080", "1212", "5"))
 }
