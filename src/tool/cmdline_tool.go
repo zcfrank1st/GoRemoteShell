@@ -196,3 +196,4 @@ func PrintLineWithColor(lines []figletlib.FigText, hardblank rune, maxwidth int,
         }
     }
 }
+// TODO  add local file store
