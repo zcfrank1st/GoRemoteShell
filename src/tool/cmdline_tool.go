@@ -17,7 +17,7 @@ type colorFunc func(interface{}) aurora.Value
 var (
     SHELL_NAME = "ShootMan"
     SHELL_VERSION = "v1.0"
-    INNER_COMMANDS = map[string]int {"session": 1, "help": 2, "clear": 3, "leave": 4}
+    INNER_COMMANDS = map[string]int {"session": 1, "help": 2, "clean": 3, "leave": 4}
 
     session = map[string]string{}
     current_session string
@@ -93,7 +93,12 @@ func (s *ShellCommand) run () {
 
 func (s *ShellCommand) runSessionCommand() {
     sessionCommandLen := len(s.arguments)
-    if 1 == sessionCommandLen {
+    if 0 == sessionCommandLen {
+        fmt.Println(aurora.Blue("[INFO] session list {key, value}: "))
+        for k, v := range session {
+            fmt.Println(aurora.Blue("{" + k + ", " + v + "}"))
+        }
+    } else if 1 == sessionCommandLen {
         if value, ok := session[s.arguments[0]]; ok {
             current_session = value
             fmt.Println(aurora.Green("[OK] load session: " + current_session))
@@ -114,7 +119,7 @@ func (s *ShellCommand) runClearCommand() {
     for k := range session {
         delete(session, k)
     }
-    fmt.Println(aurora.Green("[OK] clear sessions done!"))
+    fmt.Println(aurora.Green("[OK] clean sessions done!"))
 }
 
 func (s *ShellCommand) runHelpCommand(){
@@ -128,9 +133,10 @@ func (s *ShellCommand) runHelpCommand(){
     \/_/\/_/\/____/\/____/ \ \ \/
                             \ \_\
                              \/_/
+session                  "list all sessions"
 session [key] [user@ip]  "set session"
 session [key]            "load session"
-clear                    "clear sessions"
+clean                    "clean sessions"
 help                     "show help info"
 leave                    "leave the command shell"
 
