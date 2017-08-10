@@ -151,7 +151,7 @@ func (s *ShellCommand) runRemoteShellCommand() {
 
     args := append([]string{s.verb}, s.arguments...)
 
-    remoteCmd := exec.Command("ssh ", args...)
+    remoteCmd := exec.Command("ssh ", current_session, strings.Join(args, " "))
     remoteCmd.Stdout = os.Stdout
     remoteCmd.Stderr = os.Stderr
 
