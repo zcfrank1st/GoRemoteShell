@@ -1,4 +1,4 @@
-GO-demo
+GoRemoteShell
 =====
 
-demo project which uses glide to manage dependencies and uses make to build.  
+> A project to manipulate remote machine if both are all ssh authorized  
