@@ -9,10 +9,14 @@ import (
     "os/exec"
     "github.com/lukesampson/figlet/figletlib"
     "flag"
+    "github.com/logrusorgru/aurora"
 )
+
+type colorFunc func(interface{}) aurora.Value
 
 var (
     SHELL_NAME = "ShootMan"
+    SHELL_VERSION = "v1.0"
     INNER_COMMANDS = map[string]int {"session": 1, "help": 2, "clear": 3, "leave": 4}
 
     session = map[string]string{}
@@ -27,10 +31,10 @@ func init () {
 }
 
 func main() {
-    f, _ := figletlib.GetFontByName(fontPath, "larry3d")
-    figletlib.PrintMsg(SHELL_NAME, f, 80, f.Settings(), "left")
+    f, _ := figletlib.GetFontByName(fontPath, "big")
+    PrintMsgWithColor(SHELL_NAME, f, 80, f.Settings(), "left", aurora.Cyan)
 
-    fmt.Printf("%70s", "v1.0\n\n")
+    fmt.Printf("%50s", aurora.Cyan(SHELL_VERSION + "\n\n"))
 
     reader := bufio.NewReader(os.Stdin)
     for {
@@ -88,16 +92,16 @@ func (s *ShellCommand) runSessionCommand() {
     if 1 == sessionCommandLen {
         if value, ok := session[s.arguments[0]]; ok {
             current_session = value
-            fmt.Println("[OK] load session: " + current_session)
+            fmt.Println(aurora.Green("[OK] load session: " + current_session))
         } else {
-            fmt.Println("[ERROR] load session error, please check")
+            fmt.Println(aurora.Red("[ERROR] load session error, please check"))
         }
     } else if 2 == sessionCommandLen {
         session[s.arguments[0]] = s.arguments[1]
-        fmt.Println("[OK] set session: [key] -- " + s.arguments[0] + " [value] -- "+ s.arguments[1] +" done!")
-        fmt.Println("[INFO] please remember to load session")
+        fmt.Println(aurora.Green("[OK] set session: [key] -- " + s.arguments[0] + " [value] -- "+ s.arguments[1] +" done!"))
+        fmt.Println(aurora.Blue("[INFO] please remember to load session"))
     } else {
-        fmt.Println("[ERROR] wrong session command, use `help`")
+        fmt.Println(aurora.Red("[ERROR] wrong session command, use `help`"))
     }
 }
 
@@ -106,11 +110,11 @@ func (s *ShellCommand) runClearCommand() {
     for k := range session {
         delete(session, k)
     }
-    fmt.Println("[OK] clear sessions done!")
+    fmt.Println(aurora.Green("[OK] clear sessions done!"))
 }
 
 func (s *ShellCommand) runHelpCommand(){
-    fmt.Println(`
+    fmt.Println(aurora.Brown(`
  __  __          ___
 /\ \/\ \        /\_ \
 \ \ \_\ \     __\//\ \    _____
@@ -124,19 +128,20 @@ session [key] [user@ip]  "set session"
 session [key]            "load session"
 clear                    "clear sessions"
 help                     "show help info"
+leave                    "leave the command shell"
 
 "when set session you can use remote linux shell"
-`)
+`))
 }
 
 func (s *ShellCommand) runLeaveCommand() {
-    fmt.Println("[INFO] leaving " + SHELL_NAME + "...")
+    fmt.Println(aurora.Blue("[INFO] leaving " + SHELL_NAME + "..."))
     os.Exit(1)
 }
 
 func (s *ShellCommand) runRemoteShellCommand() {
     if current_session == "" {
-        fmt.Println("[ERROR] please set/load session first ! use `help`")
+        fmt.Println(aurora.Red("[ERROR] please set/load session first ! use `help`"))
         return
     }
 
@@ -147,6 +152,37 @@ func (s *ShellCommand) runRemoteShellCommand() {
     remoteCmd.Stderr = os.Stderr
 
     if err:= remoteCmd.Run(); err != nil {
-        fmt.Println("[ERROR] run remote command error !")
+        fmt.Println(aurora.Red("[ERROR] run remote command error !"))
+    }
+}
+
+func PrintMsgWithColor(msg string, f *figletlib.Font, maxwidth int, s figletlib.Settings, align string, color colorFunc) {
+    lines := figletlib.GetLines(msg, f, maxwidth, s)
+    PrintLineWithColor(lines, s.HardBlank(), maxwidth, align, color)
+}
+
+func PrintLineWithColor(lines []figletlib.FigText, hardblank rune, maxwidth int, align string, color colorFunc) {
+    padleft := func(linelen int) {
+        switch align {
+        case "right":
+            fmt.Print(strings.Repeat(" ", maxwidth-linelen))
+        case "center":
+            fmt.Print(strings.Repeat(" ", (maxwidth-linelen)/2))
+        }
+    }
+
+    for _, line := range lines {
+        for _, subline := range line.Art() {
+            padleft(len(subline))
+            for _, outchar := range subline {
+                if outchar == hardblank {
+                    outchar = ' '
+                }
+                fmt.Printf("%c", color(outchar))
+            }
+            if len(subline) < maxwidth && align != "right" {
+                fmt.Println()
+            }
+        }
     }
 }
