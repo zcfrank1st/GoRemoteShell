@@ -31,10 +31,14 @@ func init () {
 }
 
 func main() {
-    f, _ := figletlib.GetFontByName(fontPath, "big")
-    PrintMsgWithColor(SHELL_NAME, f, 80, f.Settings(), "left", aurora.Cyan)
-
-    fmt.Printf("%50s", aurora.Cyan(SHELL_VERSION + "\n\n"))
+    if fontPath != "" {
+        f, _ := figletlib.GetFontByName(fontPath, "big")
+        PrintMsgWithColor(SHELL_NAME, f, 80, f.Settings(), "left", aurora.Cyan)
+        fmt.Printf("%50s", aurora.Cyan(SHELL_VERSION + "\n\n"))
+    } else {
+        fmt.Println(aurora.Cyan(SHELL_NAME + " " + SHELL_VERSION))
+        fmt.Println()
+    }
 
     reader := bufio.NewReader(os.Stdin)
     for {
