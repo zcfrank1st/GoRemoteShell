@@ -1,0 +1,6 @@
+package: .
+import:
+- package: github.com/lukesampson/figlet
+  subpackages:
+  - figletlib
+- package: github.com/logrusorgru/aurora
