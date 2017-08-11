@@ -6,5 +6,5 @@ import (
 )
 
 func main() {
-    fmt.Println(filepath.Separator)
+    fmt.Println(filepath.FromSlash("/tmp/shootman.ini"))
 }
