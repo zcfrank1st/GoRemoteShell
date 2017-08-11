@@ -10,7 +10,11 @@ GoRemoteShell(Alias: ShootMan)
 * run `make build`
 * run `./shootman`
 
-Tips: can use `./shootman -font-path=blabla` to use the figlet feature
+Tips: 
+
+you can use `./shootman -font-path=blabla` to enable the figlet feature,
+and can use `./shootman -session-file=blabla` to enable session file store(default: /tmp/shootman.ini)
+ 
 
 ### Licence
 
